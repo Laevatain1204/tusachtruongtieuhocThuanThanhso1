@@ -636,7 +636,7 @@
             <input type="file" id="fileInput" accept=".pdf,.docx" onchange="handleFileSelect(event)" />
             <div class="drop-icon">📂</div>
             <div class="drop-text">Kéo thả tệp vào đây hoặc nhấn để chọn</div>
-            <div class="drop-hint">Dung lượng tối đa ~15MB (tuỳ bộ nhớ trình duyệt)</div>
+            <div class="drop-hint">Hỗ trợ tệp lớn — không giới hạn dung lượng (IndexedDB)</div>
             <div class="drop-types">
               <span class="type-pill pdf">PDF</span>
               <span class="type-pill docx">DOCX</span>
@@ -678,6 +678,63 @@
 </div>
 
 <script>
+  // ═══════════════════════════════════════════════
+  // ─── IndexedDB — Không giới hạn dung lượng ───
+  // ═══════════════════════════════════════════════
+  const DB_NAME    = 'library_tusach';
+  const DB_VERSION = 1;
+  const STORE      = 'documents';
+
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = e => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(STORE)) {
+          db.createObjectStore(STORE, { keyPath: 'id' });
+        }
+      };
+      req.onsuccess = e => resolve(e.target.result);
+      req.onerror   = e => reject(e.target.error);
+    });
+  }
+
+  function getAllDocs() {
+    return openDB().then(db => new Promise((resolve, reject) => {
+      const tx  = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).getAll();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror   = () => reject(req.error);
+    }));
+  }
+
+  function saveDocToDB(doc) {
+    return openDB().then(db => new Promise((resolve, reject) => {
+      const tx  = db.transaction(STORE, 'readwrite');
+      const req = tx.objectStore(STORE).put(doc);
+      req.onsuccess = () => resolve();
+      req.onerror   = () => reject(req.error);
+    }));
+  }
+
+  function deleteDocFromDB(id) {
+    return openDB().then(db => new Promise((resolve, reject) => {
+      const tx  = db.transaction(STORE, 'readwrite');
+      const req = tx.objectStore(STORE).delete(id);
+      req.onsuccess = () => resolve();
+      req.onerror   = () => reject(req.error);
+    }));
+  }
+
+  function clearAllDocs() {
+    return openDB().then(db => new Promise((resolve, reject) => {
+      const tx  = db.transaction(STORE, 'readwrite');
+      const req = tx.objectStore(STORE).clear();
+      req.onsuccess = () => resolve();
+      req.onerror   = () => reject(req.error);
+    }));
+  }
+
   // ─── AUTH ───
   const ADMIN_USER = 'admin';
   const ADMIN_PASS = 'daisu2024';
@@ -736,16 +793,6 @@
     if (name === 'manage') renderManage();
   }
 
-  // ─── STORAGE ───
-  function getDocs() {
-    try { return JSON.parse(localStorage.getItem('library_docs') || '[]'); }
-    catch(e) { return []; }
-  }
-
-  function saveDocs(docs) {
-    localStorage.setItem('library_docs', JSON.stringify(docs));
-  }
-
   function genId() {
     return Date.now().toString(36) + Math.random().toString(36).slice(2,7);
   }
@@ -794,7 +841,7 @@
   }
 
   // ─── UPLOAD ───
-  function uploadDoc() {
+  async function uploadDoc() {
     const title = document.getElementById('docTitle').value.trim();
     if (!title) { showAlert('error', '⚠ Vui lòng nhập tiêu đề tài liệu.'); return; }
     if (!selectedFile) { showAlert('error', '⚠ Vui lòng chọn tệp tài liệu.'); return; }
@@ -804,75 +851,62 @@
     btn.disabled = true;
 
     const progress = document.getElementById('uploadProgress');
-    const bar = document.getElementById('progressBar');
-    const ptext = document.getElementById('progressText');
+    const bar      = document.getElementById('progressBar');
+    const ptext    = document.getElementById('progressText');
     progress.style.display = 'block';
     bar.style.width = '0%';
     ptext.textContent = 'Đang đọc tệp...';
 
-    const reader = new FileReader();
+    try {
+      // Read file as base64
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onprogress = e => {
+          if (e.lengthComputable) {
+            bar.style.width = Math.round(e.loaded / e.total * 65) + '%';
+          }
+        };
+        reader.onload  = e => resolve(e.target.result);
+        reader.onerror = () => reject(new Error('Không thể đọc tệp'));
+        reader.readAsDataURL(selectedFile);
+      });
 
-    reader.onprogress = e => {
-      if (e.lengthComputable) {
-        const pct = Math.round(e.loaded / e.total * 70);
-        bar.style.width = pct + '%';
-      }
-    };
+      bar.style.width = '75%';
+      ptext.textContent = 'Đang lưu vào cơ sở dữ liệu...';
 
-    reader.onload = e => {
-      bar.style.width = '85%';
-      ptext.textContent = 'Đang lưu tài liệu...';
+      const doc = {
+        id:          genId(),
+        title,
+        author:      document.getElementById('docAuthor').value.trim(),
+        category:    document.getElementById('docCategory').value,
+        year:        document.getElementById('docYear').value.trim(),
+        description: document.getElementById('docDesc').value.trim(),
+        type:        ext,
+        filename:    selectedFile.name,
+        size:        selectedFile.size,
+        date:        new Date().toISOString(),
+        data:        dataUrl
+      };
+
+      await saveDocToDB(doc);
+
+      bar.style.width = '100%';
+      ptext.textContent = 'Hoàn thành!';
 
       setTimeout(() => {
-        try {
-          const docs = getDocs();
-          const doc = {
-            id: genId(),
-            title,
-            author: document.getElementById('docAuthor').value.trim(),
-            category: document.getElementById('docCategory').value,
-            year: document.getElementById('docYear').value.trim(),
-            description: document.getElementById('docDesc').value.trim(),
-            type: ext,
-            filename: selectedFile.name,
-            size: selectedFile.size,
-            date: new Date().toISOString(),
-            data: e.target.result
-          };
+        progress.style.display = 'none';
+        bar.style.width = '0%';
+        showAlert('success', '✓ Tài liệu "' + title + '" đã được đăng tải thành công!');
+        resetForm();
+        refreshStats();
+      }, 400);
 
-          docs.push(doc);
-          saveDocs(docs);
-
-          bar.style.width = '100%';
-          ptext.textContent = 'Hoàn thành!';
-
-          setTimeout(() => {
-            progress.style.display = 'none';
-            bar.style.width = '0%';
-            showAlert('success', '✓ Tài liệu "' + title + '" đã được đăng tải thành công!');
-            resetForm();
-            refreshStats();
-          }, 400);
-
-        } catch(err) {
-          progress.style.display = 'none';
-          if (err.name === 'QuotaExceededError') {
-            showAlert('error', '⚠ Dung lượng lưu trữ đã đầy. Vui lòng xóa bớt tài liệu.');
-          } else {
-            showAlert('error', '⚠ Đã xảy ra lỗi: ' + err.message);
-          }
-        }
-        btn.disabled = false;
-      }, 300);
-    };
-
-    reader.onerror = () => {
-      showAlert('error', '⚠ Không thể đọc tệp. Vui lòng thử lại.');
-      btn.disabled = false;
+    } catch(err) {
       progress.style.display = 'none';
-    };
+      showAlert('error', '⚠ Đã xảy ra lỗi: ' + (err.message || err));
+    }
 
-    reader.readAsDataURL(selectedFile);
+    btn.disabled = false;
   }
 
   function resetForm() {
@@ -894,17 +928,17 @@
   }
 
   // ─── STATS ───
-  function refreshStats() {
-    const docs = getDocs();
+  async function refreshStats() {
+    const docs = await getAllDocs();
     document.getElementById('sTotalDocs').textContent = docs.length;
-    document.getElementById('sPdfCount').textContent = docs.filter(d=>d.type==='pdf').length;
-    document.getElementById('sDocxCount').textContent = docs.filter(d=>d.type==='docx').length;
+    document.getElementById('sPdfCount').textContent  = docs.filter(d => d.type === 'pdf').length;
+    document.getElementById('sDocxCount').textContent = docs.filter(d => d.type === 'docx').length;
   }
 
   // ─── MANAGE ───
-  function renderManage() {
-    const docs = getDocs().sort((a,b)=>new Date(b.date)-new Date(a.date));
-    const el = document.getElementById('manageContent');
+  async function renderManage() {
+    const docs    = (await getAllDocs()).sort((a,b) => new Date(b.date) - new Date(a.date));
+    const el      = document.getElementById('manageContent');
     const countEl = document.getElementById('docCountLabel');
     countEl.textContent = docs.length + ' tài liệu';
     refreshStats();
@@ -946,13 +980,30 @@
             </tr>
           `).join('')}
         </tbody>
-      </table>`;
+      </table>
+      <div style="margin-top:1.5rem; padding:1rem 0; border-top:1px solid var(--cream-dark); display:flex; gap:1rem; align-items:center;">
+        <button onclick="doClearAll()" style="
+          background:transparent; border:1px solid rgba(139,32,32,0.35); color:var(--danger);
+          padding:8px 20px; border-radius:3px; cursor:pointer;
+          font-family:'Cormorant Garamond',serif; font-size:0.9rem; font-weight:600;
+          transition:all 0.2s;">
+          🗑 Xóa Tất Cả Tài Liệu
+        </button>
+        <span style="font-family:'Cormorant Garamond',serif; font-size:0.85rem; color:#bbb;">
+          Lưu ý: Dữ liệu lưu trong IndexedDB trình duyệt này.
+        </span>
+      </div>`;
   }
 
-  function deleteDoc(id, title) {
+  async function deleteDoc(id, title) {
     if (!confirm('Bạn có chắc muốn xóa tài liệu "' + title + '"?\nHành động này không thể hoàn tác.')) return;
-    const docs = getDocs().filter(d => d.id !== id);
-    saveDocs(docs);
+    await deleteDocFromDB(id);
+    renderManage();
+  }
+
+  async function doClearAll() {
+    if (!confirm('XÓA TẤT CẢ tài liệu?\nHành động này không thể hoàn tác!')) return;
+    await clearAllDocs();
     renderManage();
   }
 

@@ -879,13 +879,37 @@
 </footer>
 
 <script>
-  // ─── STORAGE HELPERS ───
-  function getDocs() {
-    try { return JSON.parse(localStorage.getItem('library_docs') || '[]'); }
-    catch(e) { return []; }
+  // ═══════════════════════════════════════════════
+  // ─── IndexedDB — Không giới hạn dung lượng ───
+  // ═══════════════════════════════════════════════
+  const DB_NAME    = 'library_tusach';
+  const DB_VERSION = 1;
+  const STORE      = 'documents';
+
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = e => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(STORE)) {
+          db.createObjectStore(STORE, { keyPath: 'id' });
+        }
+      };
+      req.onsuccess = e => resolve(e.target.result);
+      req.onerror   = e => reject(e.target.error);
+    });
   }
 
-  // ─── RENDER ───
+  function getAllDocs() {
+    return openDB().then(db => new Promise((resolve, reject) => {
+      const tx  = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).getAll();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror   = () => reject(req.error);
+    }));
+  }
+
+  // ─── STATE ───
   let currentFilter = 'all';
   let currentSearch = '';
 
@@ -905,52 +929,43 @@
   function renderFeatured(docs) {
     const sect = document.getElementById('featuredSection');
     const grid = document.getElementById('featuredGrid');
-    const recent = [...docs].sort((a,b)=> new Date(b.date)-new Date(a.date)).slice(0,2);
-
-    if (recent.length === 0) {
-      sect.style.display = 'none';
-      return;
-    }
+    const recent = [...docs].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0,2);
+    if (recent.length === 0) { sect.style.display = 'none'; return; }
     sect.style.display = '';
     grid.innerHTML = recent.map(doc => `
       <div class="featured-card" onclick="openDoc('${doc.id}')">
         <div class="featured-label">✦ ${doc.category || 'Tài Liệu'}</div>
         <div class="featured-title">${doc.title}</div>
         <div class="featured-author">— ${doc.author || 'Chưa rõ tác giả'}</div>
-        <a class="featured-read" href="viewer.html?id=${doc.id}">
-          Đọc Ngay →
-        </a>
+        <a class="featured-read" href="viewer.html?id=${doc.id}">Đọc Ngay →</a>
       </div>
     `).join('');
   }
 
-  function renderDocs() {
-    const docs = getDocs();
-    let filtered = docs;
-
-    if (currentFilter !== 'all') {
-      filtered = filtered.filter(d => d.category === currentFilter);
-    }
-
-    if (currentSearch) {
-      const q = currentSearch.toLowerCase();
-      filtered = filtered.filter(d =>
-        (d.title || '').toLowerCase().includes(q) ||
-        (d.author || '').toLowerCase().includes(q) ||
-        (d.description || '').toLowerCase().includes(q) ||
-        (d.category || '').toLowerCase().includes(q)
-      );
-    }
-
-    filtered.sort((a,b) => new Date(b.date) - new Date(a.date));
+  async function renderDocs() {
+    const allDocs = await getAllDocs();
 
     // Stats
-    const allDocs = getDocs();
     document.getElementById('statDocs').textContent = allDocs.length;
     const cats = new Set(allDocs.map(d => d.category).filter(Boolean));
     document.getElementById('statCats').textContent = cats.size;
 
     renderFeatured(allDocs);
+
+    let filtered = [...allDocs];
+    if (currentFilter !== 'all') {
+      filtered = filtered.filter(d => d.category === currentFilter);
+    }
+    if (currentSearch) {
+      const q = currentSearch.toLowerCase();
+      filtered = filtered.filter(d =>
+        (d.title       || '').toLowerCase().includes(q) ||
+        (d.author      || '').toLowerCase().includes(q) ||
+        (d.description || '').toLowerCase().includes(q) ||
+        (d.category    || '').toLowerCase().includes(q)
+      );
+    }
+    filtered.sort((a,b) => new Date(b.date) - new Date(a.date));
 
     const grid = document.getElementById('docGrid');
     if (filtered.length === 0) {
@@ -977,13 +992,11 @@
               ${isPdf ? '📄 PDF' : '📝 DOCX'}
             </div>
             <div class="doc-title">${doc.title}</div>
-            ${doc.author ? `<div class="doc-author">— ${doc.author}</div>` : ''}
+            ${doc.author      ? `<div class="doc-author">— ${doc.author}</div>` : ''}
             ${doc.description ? `<div class="doc-desc">${doc.description}</div>` : ''}
             <div class="doc-meta">
               <span class="doc-date">📅 ${formatDate(doc.date)}</span>
-              <a class="doc-read-btn" href="viewer.html?id=${doc.id}" onclick="event.stopPropagation()">
-                Xem →
-              </a>
+              <a class="doc-read-btn" href="viewer.html?id=${doc.id}" onclick="event.stopPropagation()">Xem →</a>
             </div>
           </div>
         </div>`;

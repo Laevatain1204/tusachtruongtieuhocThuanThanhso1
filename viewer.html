@@ -363,12 +363,37 @@
 </div>
 
 <script>
-  // ─── HELPERS ───
-  function getDocs() {
-    try { return JSON.parse(localStorage.getItem('library_docs') || '[]'); }
-    catch(e) { return []; }
+  // ═══════════════════════════════════════════════
+  // ─── IndexedDB — Không giới hạn dung lượng ───
+  // ═══════════════════════════════════════════════
+  const DB_NAME    = 'library_tusach';
+  const DB_VERSION = 1;
+  const STORE      = 'documents';
+
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = e => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(STORE)) {
+          db.createObjectStore(STORE, { keyPath: 'id' });
+        }
+      };
+      req.onsuccess = e => resolve(e.target.result);
+      req.onerror   = e => reject(e.target.error);
+    });
   }
 
+  function getDocById(id) {
+    return openDB().then(db => new Promise((resolve, reject) => {
+      const tx  = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).get(id);
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror   = () => reject(req.error);
+    }));
+  }
+
+  // ─── HELPERS ───
   function getParam(key) {
     return new URLSearchParams(window.location.search).get(key);
   }
@@ -387,12 +412,16 @@
   }
 
   // ─── INIT ───
-  function init() {
+  async function init() {
     const id = getParam('id');
     if (!id) { showError(); return; }
 
-    const docs = getDocs();
-    const doc = docs.find(d => d.id === id);
+    let doc;
+    try {
+      doc = await getDocById(id);
+    } catch(e) {
+      showError(); return;
+    }
 
     if (!doc) { showError(); return; }
 
@@ -401,29 +430,24 @@
 
     // Fill info bar
     document.getElementById('docInfoBar').style.display = 'block';
-    document.getElementById('infoTitle').textContent = doc.title;
-      document.getElementById('infoCategory').textContent = doc.category || 'Tài liệu';
+    document.getElementById('infoTitle').textContent    = doc.title;
+    document.getElementById('infoCategory').textContent = doc.category || 'Tài liệu';
 
-    const authorEl = document.getElementById('infoAuthor');
-    if (doc.author) { authorEl.textContent = '✒ ' + doc.author; }
-
-    const yearEl = document.getElementById('infoYear');
-    if (doc.year) { yearEl.textContent = '📅 ' + doc.year; }
-
-    const typeEl = document.getElementById('infoType');
-    typeEl.innerHTML = `<span class="type-pill ${doc.type}">${doc.type.toUpperCase()}</span>`;
+    if (doc.author) document.getElementById('infoAuthor').textContent = '✒ ' + doc.author;
+    if (doc.year)   document.getElementById('infoYear').textContent   = '📅 ' + doc.year;
+    document.getElementById('infoType').innerHTML = `<span class="type-pill ${doc.type}">${doc.type.toUpperCase()}</span>`;
 
     // Fill sidebar
-    document.getElementById('sideTitle').textContent = doc.title;
+    document.getElementById('sideTitle').textContent  = doc.title;
     document.getElementById('sideAuthor').textContent = doc.author || '—';
-    document.getElementById('sideCat').textContent = doc.category || '—';
-    document.getElementById('sideYear').textContent = doc.year || '—';
-    document.getElementById('sideType').textContent = doc.type.toUpperCase() + ' · ' + formatSize(doc.size);
-    document.getElementById('sideDate').textContent = formatDate(doc.date);
+    document.getElementById('sideCat').textContent    = doc.category || '—';
+    document.getElementById('sideYear').textContent   = doc.year || '—';
+    document.getElementById('sideType').textContent   = doc.type.toUpperCase() + ' · ' + formatSize(doc.size);
+    document.getElementById('sideDate').textContent   = formatDate(doc.date);
 
     if (doc.description) {
       document.getElementById('descCard').style.display = 'block';
-      document.getElementById('sideDesc').textContent = doc.description;
+      document.getElementById('sideDesc').textContent   = doc.description;
     }
 
     // Download buttons
@@ -431,49 +455,41 @@
 
     // Show viewer
     document.getElementById('stateLoading').style.display = 'none';
-    document.getElementById('viewerArea').style.display = 'flex';
+    document.getElementById('viewerArea').style.display   = 'flex';
 
-    if (doc.type === 'pdf') {
-      renderPDF(doc);
-    } else {
-      renderDOCX(doc);
-    }
+    if (doc.type === 'pdf') renderPDF(doc);
+    else                    renderDOCX(doc);
   }
 
   function showError() {
     document.getElementById('stateLoading').style.display = 'none';
-    document.getElementById('stateError').style.display = 'flex';
+    document.getElementById('stateError').style.display   = 'flex';
   }
 
   // ─── DOWNLOAD ───
   function setupDownload(doc) {
-    const url = doc.data;
     const filename = doc.filename || (doc.title + '.' + doc.type);
-
-    function setDl(el) {
+    [document.getElementById('btnDownload'), document.getElementById('btnDlSide')].forEach(el => {
       el.style.display = 'flex';
-      el.href = url;
-      el.download = filename;
-    }
-
-    setDl(document.getElementById('btnDownload'));
-    setDl(document.getElementById('btnDlSide'));
+      el.href          = doc.data;
+      el.download      = filename;
+    });
   }
 
   // ─── PDF VIEWER ───
   function renderPDF(doc) {
-    const wrap = document.createElement('div');
-    wrap.className = 'pdf-viewer-wrap';
-    wrap.style.flex = '1';
+    const wrap  = document.createElement('div');
+    wrap.className    = 'pdf-viewer-wrap';
+    wrap.style.flex   = '1';
 
     const iframe = document.createElement('iframe');
-    iframe.src = doc.data;
-    iframe.title = doc.title;
-    iframe.style.width = '100%';
-    iframe.style.height = '100%';
+    iframe.src        = doc.data;
+    iframe.title      = doc.title;
+    iframe.style.width     = '100%';
+    iframe.style.height    = '100%';
     iframe.style.minHeight = 'calc(100vh - 260px)';
-    iframe.style.border = 'none';
-    iframe.style.display = 'block';
+    iframe.style.border    = 'none';
+    iframe.style.display   = 'block';
 
     wrap.appendChild(iframe);
     document.getElementById('viewerMain').appendChild(wrap);
@@ -481,9 +497,9 @@
 
   // ─── DOCX VIEWER ───
   function renderDOCX(doc) {
-    const wrap = document.createElement('div');
-    wrap.className = 'docx-viewer-wrap';
-    wrap.style.flex = '1';
+    const wrap    = document.createElement('div');
+    wrap.className    = 'docx-viewer-wrap';
+    wrap.style.flex   = '1';
 
     const content = document.createElement('div');
     content.className = 'docx-content';
@@ -498,14 +514,11 @@
     wrap.appendChild(content);
     document.getElementById('viewerMain').appendChild(wrap);
 
-    // Convert base64 data URL to ArrayBuffer
     try {
       const base64 = doc.data.split(',')[1];
       const binary = atob(base64);
-      const bytes = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i++) {
-        bytes[i] = binary.charCodeAt(i);
-      }
+      const bytes  = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
 
       mammoth.convertToHtml({ arrayBuffer: bytes.buffer })
         .then(result => {
@@ -515,25 +528,17 @@
             content.innerHTML = `
               <div style="text-align:center; padding:3rem; color:var(--text-muted);">
                 <div style="font-size:2rem; margin-bottom:1rem;">📝</div>
-                <div style="font-family:'Playfair Display',serif; font-size:1.2rem; margin-bottom:0.5rem; color:var(--wine-deep);">
-                  Tài Liệu Trống
-                </div>
-                <div style="font-family:'Cormorant Garamond',serif; font-size:1rem;">
-                  Tài liệu này không có nội dung văn bản để hiển thị.
-                </div>
+                <div style="font-family:'Playfair Display',serif; font-size:1.2rem; margin-bottom:0.5rem; color:var(--wine-deep);">Tài Liệu Trống</div>
+                <div style="font-family:'Cormorant Garamond',serif; font-size:1rem;">Tài liệu này không có nội dung văn bản để hiển thị.</div>
               </div>`;
           }
         })
-        .catch(err => {
+        .catch(() => {
           content.innerHTML = `
-            <div style="text-align:center; padding:3rem; color:var(--text-muted);">
+            <div style="text-align:center; padding:3rem;">
               <div style="font-size:2rem; margin-bottom:1rem;">⚠</div>
-              <div style="font-family:'Playfair Display',serif; font-size:1.2rem; margin-bottom:0.5rem; color:var(--wine-deep);">
-                Không Thể Hiển Thị
-              </div>
-              <div style="font-family:'Cormorant Garamond',serif; font-size:1rem; margin-bottom:1.5rem;">
-                Trình duyệt không thể hiển thị tài liệu này. Vui lòng tải xuống để xem.
-              </div>
+              <div style="font-family:'Playfair Display',serif; font-size:1.2rem; margin-bottom:0.5rem; color:var(--wine-deep);">Không Thể Hiển Thị</div>
+              <div style="font-family:'Cormorant Garamond',serif; font-size:1rem; margin-bottom:1.5rem;">Vui lòng tải xuống để xem trên máy.</div>
               <a href="${doc.data}" download="${doc.filename || doc.title + '.docx'}"
                  style="display:inline-flex;align-items:center;gap:8px;background:var(--wine-deep);
                         color:var(--gold-light);text-decoration:none;padding:12px 28px;
@@ -543,10 +548,7 @@
             </div>`;
         });
     } catch(e) {
-      content.innerHTML = `
-        <div style="text-align:center; padding:3rem;">
-          <p>Có lỗi khi đọc tệp. Vui lòng tải xuống để xem.</p>
-        </div>`;
+      content.innerHTML = `<div style="text-align:center;padding:3rem;"><p>Có lỗi khi đọc tệp. Vui lòng tải xuống để xem.</p></div>`;
     }
   }
 
