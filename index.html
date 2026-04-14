@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tủ Sách Cộng Đồng Trường Tiểu Học Thuận Thành Số 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --wine: #5C1A2E;
+      --wine-deep: #3D1020;
+      --wine-light: #8B2D46;
+      --gold: #C5973A;
+      --gold-light: #E8C068;
+      --gold-pale: #F5E6C4;
+      --cream: #FBF5EA;
+      --cream-dark: #F0E6D0;
+      --text: #2A1810;
+      --text-muted: #6B5040;
+      --green-dark: #1A3228;
+      --white: #FFFDF8;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'EB Garamond', serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      background: var(--wine-deep);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 2px solid var(--gold);
+    }
+
+    .header-inner {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--gold);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+    }
+
+    .logo-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.72rem;
+      color: rgba(229,198,130,0.6);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    nav a {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--gold-pale);
+      text-decoration: none;
+      padding: 6px 16px;
+      border-radius: 3px;
+      transition: all 0.2s;
+      letter-spacing: 0.03em;
+    }
+
+    nav a:hover { background: rgba(197,151,58,0.15); color: var(--gold-light); }
+
+    nav a.active {
+      background: var(--gold);
+      color: var(--wine-deep);
+      font-weight: 600;
+    }
+
+    .btn-admin {
+      background: transparent !important;
+      border: 1px solid var(--gold) !important;
+      color: var(--gold) !important;
+    }
+
+    .btn-admin:hover {
+      background: var(--gold) !important;
+      color: var(--wine-deep) !important;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      height: 520px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1600&q=80');
+      background-size: cover;
+      background-position: center 30%;
+      filter: brightness(0.35) sepia(0.4);
+      transform: scale(1.05);
+      animation: heroZoom 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroZoom {
+      from { transform: scale(1.05); }
+      to   { transform: scale(1.12); }
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(61,16,32,0.7) 0%, rgba(26,50,40,0.5) 100%);
+    }
+
+    .hero-decor {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(197,151,58,0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(197,151,58,0.12) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .hero-content {
+      position: relative;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      text-align: center;
+      width: 100%;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(197,151,58,0.2);
+      border: 1px solid rgba(197,151,58,0.4);
+      color: var(--gold-light);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 6px 18px;
+      border-radius: 2px;
+      margin-bottom: 1.5rem;
+      animation: fadeSlideDown 0.8s ease both;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      animation: fadeSlideDown 0.8s 0.15s ease both;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold-light);
+    }
+
+    .hero-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      color: rgba(255,255,255,0.75);
+      max-width: 640px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+      animation: fadeSlideDown 0.8s 0.3s ease both;
+    }
+
+    .hero-search {
+      display: flex;
+      max-width: 580px;
+      margin: 0 auto;
+      background: rgba(255,253,248,0.97);
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+      animation: fadeSlideDown 0.8s 0.45s ease both;
+    }
+
+    .hero-search input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 14px 20px;
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .hero-search input::placeholder { color: #aaa; }
+
+    .hero-search button {
+      background: var(--wine);
+      color: var(--gold-light);
+      border: none;
+      padding: 14px 28px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      letter-spacing: 0.05em;
+    }
+
+    .hero-search button:hover { background: var(--wine-light); }
+
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── STATS BAR ─── */
+    .stats-bar {
+      background: var(--green-dark);
+      border-top: 2px solid var(--gold);
+      border-bottom: 2px solid var(--gold);
+    }
+
+    .stats-inner {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .stat-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 18px 20px;
+      border-right: 1px solid rgba(197,151,58,0.25);
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-icon { font-size: 1.6rem; }
+
+    .stat-text { display: flex; flex-direction: column; }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem;
+      color: rgba(229,198,130,0.6);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ─── MAIN CONTENT ─── */
+    .main {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+
+    /* ─── SECTION HEADER ─── */
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--cream-dark);
+    }
+
+    .section-title-group {}
+
+    .section-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--wine-deep);
+      line-height: 1.15;
+    }
+
+    /* ─── FILTER BAR ─── */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+      align-items: center;
+    }
+
+    .filter-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-right: 4px;
+    }
+
+    .filter-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.92rem;
+      font-weight: 500;
+      padding: 7px 18px;
+      border-radius: 2px;
+      border: 1px solid var(--cream-dark);
+      background: var(--white);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.03em;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--wine-light);
+      color: var(--wine);
+    }
+
+    .filter-btn.active {
+      background: var(--wine);
+      color: var(--gold-pale);
+      border-color: var(--wine);
+    }
+
+    /* ─── DOCUMENT GRID ─── */
+    .doc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .doc-card {
+      background: var(--white);
+      border: 1px solid var(--cream-dark);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .doc-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 40px rgba(92,26,46,0.15);
+      border-color: var(--gold);
+    }
+
+    .doc-card-top {
+      height: 8px;
+      background: var(--wine);
+    }
+
+    .doc-card-top.pdf-type { background: linear-gradient(90deg, var(--wine), var(--wine-light)); }
+    .doc-card-top.docx-type { background: linear-gradient(90deg, var(--green-dark), #2A5240); }
+
+    .doc-card-body {
+      padding: 1.5rem;
+    }
+
+    .doc-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 2px;
+      margin-bottom: 12px;
+    }
+
+    .doc-type-badge.pdf { background: rgba(92,26,46,0.1); color: var(--wine); }
+    .doc-type-badge.docx { background: rgba(26,50,40,0.1); color: var(--green-dark); }
+
+    .doc-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--wine-deep);
+      line-height: 1.4;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .doc-author {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .doc-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .doc-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid var(--cream-dark);
+    }
+
+    .doc-date {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem;
+      color: #aaa;
+    }
+
+    .doc-read-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--wine);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: gap 0.2s;
+    }
+
+    .doc-read-btn:hover { gap: 8px; color: var(--wine-light); }
+
+    /* ─── EMPTY STATE ─── */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 5rem 2rem;
+    }
+
+    .empty-icon { font-size: 4rem; margin-bottom: 1rem; opacity: 0.4; }
+
+    .empty-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: #bbb;
+    }
+
+    /* ─── FEATURED ─── */
+    .featured-section {
+      margin-bottom: 3.5rem;
+    }
+
+    .featured-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .featured-card {
+      background: linear-gradient(135deg, var(--wine-deep), var(--wine));
+      border-radius: 4px;
+      padding: 2rem;
+      color: var(--gold-pale);
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(197,151,58,0.3);
+    }
+
+    .featured-card::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 180px; height: 180px;
+      background: rgba(197,151,58,0.07);
+      border-radius: 50%;
+    }
+
+    .featured-card::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -20px;
+      width: 220px; height: 220px;
+      background: rgba(197,151,58,0.04);
+      border-radius: 50%;
+    }
+
+    .featured-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 48px rgba(0,0,0,0.3);
+    }
+
+    .featured-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .featured-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 8px;
+      line-height: 1.3;
+      position: relative;
+      z-index: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .featured-author {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem;
+      font-style: italic;
+      color: rgba(245,230,196,0.7);
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .featured-read {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--gold);
+      color: var(--wine-deep);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 8px 20px;
+      border-radius: 2px;
+      text-decoration: none;
+      position: relative;
+      z-index: 1;
+      transition: background 0.2s;
+    }
+
+    .featured-read:hover { background: var(--gold-light); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--wine-deep);
+      border-top: 2px solid var(--gold);
+      padding: 3rem 2rem 2rem;
+    }
+
+    .footer-inner {
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .footer-brand .logo-title { font-size: 1.1rem; }
+
+    .footer-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      color: rgba(229,198,130,0.55);
+      line-height: 1.7;
+      margin-top: 12px;
+    }
+
+    .footer-col-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .footer-links { list-style: none; }
+
+    .footer-links li { margin-bottom: 8px; }
+
+    .footer-links a {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      color: rgba(229,198,130,0.55);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--gold); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(197,151,58,0.2);
+      padding-top: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-copy {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.85rem;
+      color: rgba(229,198,130,0.4);
+    }
+
+    /* ─── ORNAMENT ─── */
+    .ornament {
+      text-align: center;
+      color: var(--gold);
+      font-size: 1.4rem;
+      margin: 2rem 0;
+      opacity: 0.5;
+      letter-spacing: 0.5em;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .hero { height: 420px; }
+      .featured-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .stats-inner { flex-wrap: wrap; }
+      .stat-item { flex: 1 1 45%; border-right: none; border-bottom: 1px solid rgba(197,151,58,0.2); }
+      .logo-sub { display: none; }
+      nav a:not(.btn-admin):not(.active) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">📚</div>
+      <div class="logo-text">
+        <span class="logo-title">Tủ Sách Cộng Đồng Thuận Thành Số 1</span>
+        <span class="logo-sub">Trường Tiểu Học Thuận Thành Số 1</span>
+      </div>
+    </a>
+    <nav>
+      <a href="index.html" class="active">Trang Chủ</a>
+      <a href="index.html#documents">Tài Liệu</a>
+      <a href="admin.html" class="btn-admin">⚙ Quản Trị</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-decor"></div>
+  <div class="hero-content">
+    <div class="hero-badge">✦ Tủ Sách Cộng Đồng ✦</div>
+    <h1 class="hero-title">
+      Tủ Sách Cộng Đồng<br /><em>Trường Tiểu Học Thuận Thành Số 1</em><br />
+      <span style="font-size:0.55em; font-style:italic; color:var(--gold-light); font-weight:400; display:block; margin-top:0.3em; letter-spacing:0.01em;">GVCN: Dương Thị Thu Hương</span>
+    </h1>
+    <p class="hero-desc">
+      Khám phá kho tàng tri thức phong phú — nơi mỗi trang sách
+      mở ra chân trời mới cho tâm hồn và trí tuệ.
+    </p>
+    <div class="hero-search">
+      <input type="text" id="heroSearch" placeholder="Tìm kiếm tài liệu, tác giả, chủ đề..." />
+      <button onclick="doSearch()">🔍 Tìm Kiếm</button>
+    </div>
+  </div>
+</section>
+
+<!-- ─── STATS ─── -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <span class="stat-icon">📄</span>
+      <div class="stat-text">
+        <span class="stat-num" id="statDocs">0</span>
+        <span class="stat-label">Tài Liệu</span>
+      </div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-icon">🗂</span>
+      <div class="stat-text">
+        <span class="stat-num" id="statCats">0</span>
+        <span class="stat-label">Danh Mục</span>
+      </div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-icon">📖</span>
+      <div class="stat-text">
+        <span class="stat-num">Mở</span>
+        <span class="stat-label">Truy Cập Tự Do</span>
+      </div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-icon">🏛</span>
+      <div class="stat-text">
+        <span class="stat-num">24/7</span>
+        <span class="stat-label">Luôn Sẵn Sàng</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MAIN ─── -->
+<main class="main">
+
+  <!-- Featured -->
+  <section class="featured-section" id="featuredSection">
+    <div class="section-header">
+      <div class="section-title-group">
+        <div class="section-label">✦ Nổi Bật</div>
+        <h2 class="section-title">Tài Liệu Mới Nhất</h2>
+      </div>
+    </div>
+    <div class="featured-grid" id="featuredGrid">
+      <!-- populated by JS -->
+    </div>
+  </section>
+
+  <div class="ornament">— ✦ —</div>
+
+  <!-- All Documents -->
+  <section id="documents">
+    <div class="section-header">
+      <div class="section-title-group">
+        <div class="section-label">✦ Kho Tàng</div>
+        <h2 class="section-title">Tất Cả Tài Liệu</h2>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <span class="filter-label">Danh mục:</span>
+      <button class="filter-btn active" onclick="filterDocs('all', this)">Tất Cả</button>
+      <button class="filter-btn" onclick="filterDocs('Văn học', this)">Văn Học</button>
+      <button class="filter-btn" onclick="filterDocs('Lịch sử', this)">Lịch Sử</button>
+      <button class="filter-btn" onclick="filterDocs('Khoa học', this)">Khoa Học</button>
+      <button class="filter-btn" onclick="filterDocs('Giáo dục', this)">Giáo Dục</button>
+      <button class="filter-btn" onclick="filterDocs('Nghệ thuật', this)">Nghệ Thuật</button>
+      <button class="filter-btn" onclick="filterDocs('Khác', this)">Khác</button>
+    </div>
+
+    <div class="doc-grid" id="docGrid">
+      <!-- populated by JS -->
+    </div>
+  </section>
+
+</main>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">
+          <div class="logo-icon">📚</div>
+          <div class="logo-text">
+            <span class="logo-title">Tủ Sách Cộng Đồng Thuận Thành Số 1</span>
+            <span class="logo-sub">Trường Tiểu Học Thuận Thành Số 1</span>
+          </div>
+        </a>
+        <p class="footer-desc">
+          Nơi lưu giữ và lan tỏa tri thức, góp phần xây dựng
+          văn hóa đọc sâu rộng trong cộng đồng học sinh
+          Trường Tiểu học Thuận Thành Số 1.
+        </p>
+      </div>
+      <div>
+        <div class="footer-col-title">Danh Mục</div>
+        <ul class="footer-links">
+          <li><a href="#" onclick="filterDocs('Văn học')">Văn Học</a></li>
+          <li><a href="#" onclick="filterDocs('Lịch sử')">Lịch Sử</a></li>
+          <li><a href="#" onclick="filterDocs('Khoa học')">Khoa Học</a></li>
+          <li><a href="#" onclick="filterDocs('Giáo dục')">Giáo Dục</a></li>
+          <li><a href="#" onclick="filterDocs('Nghệ thuật')">Nghệ Thuật</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Liên Kết</div>
+        <ul class="footer-links">
+          <li><a href="index.html">Trang Chủ</a></li>
+          <li><a href="index.html#documents">Tài Liệu</a></li>
+          <li><a href="admin.html">Quản Trị</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2024 Tủ Sách Cộng Đồng Trường Tiểu Học Thuận Thành Số 1. Mọi quyền được bảo lưu.</span>
+      <span class="footer-copy">📚 GVCN: Dương Thị Thu Hương</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ─── STORAGE HELPERS ───
+  function getDocs() {
+    try { return JSON.parse(localStorage.getItem('library_docs') || '[]'); }
+    catch(e) { return []; }
+  }
+
+  // ─── RENDER ───
+  let currentFilter = 'all';
+  let currentSearch = '';
+
+  function formatDate(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    return d.toLocaleDateString('vi-VN', { day:'2-digit', month:'2-digit', year:'numeric' });
+  }
+
+  function formatSize(bytes) {
+    if (!bytes) return '';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/(1024*1024)).toFixed(1) + ' MB';
+  }
+
+  function renderFeatured(docs) {
+    const sect = document.getElementById('featuredSection');
+    const grid = document.getElementById('featuredGrid');
+    const recent = [...docs].sort((a,b)=> new Date(b.date)-new Date(a.date)).slice(0,2);
+
+    if (recent.length === 0) {
+      sect.style.display = 'none';
+      return;
+    }
+    sect.style.display = '';
+    grid.innerHTML = recent.map(doc => `
+      <div class="featured-card" onclick="openDoc('${doc.id}')">
+        <div class="featured-label">✦ ${doc.category || 'Tài Liệu'}</div>
+        <div class="featured-title">${doc.title}</div>
+        <div class="featured-author">— ${doc.author || 'Chưa rõ tác giả'}</div>
+        <a class="featured-read" href="viewer.html?id=${doc.id}">
+          Đọc Ngay →
+        </a>
+      </div>
+    `).join('');
+  }
+
+  function renderDocs() {
+    const docs = getDocs();
+    let filtered = docs;
+
+    if (currentFilter !== 'all') {
+      filtered = filtered.filter(d => d.category === currentFilter);
+    }
+
+    if (currentSearch) {
+      const q = currentSearch.toLowerCase();
+      filtered = filtered.filter(d =>
+        (d.title || '').toLowerCase().includes(q) ||
+        (d.author || '').toLowerCase().includes(q) ||
+        (d.description || '').toLowerCase().includes(q) ||
+        (d.category || '').toLowerCase().includes(q)
+      );
+    }
+
+    filtered.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+    // Stats
+    const allDocs = getDocs();
+    document.getElementById('statDocs').textContent = allDocs.length;
+    const cats = new Set(allDocs.map(d => d.category).filter(Boolean));
+    document.getElementById('statCats').textContent = cats.size;
+
+    renderFeatured(allDocs);
+
+    const grid = document.getElementById('docGrid');
+    if (filtered.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <div class="empty-title">Chưa có tài liệu nào</div>
+          <div class="empty-text">
+            ${currentSearch
+              ? 'Không tìm thấy kết quả cho "' + currentSearch + '"'
+              : 'Admin chưa đăng tải tài liệu nào. Hãy quay lại sau!'}
+          </div>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(doc => {
+      const isPdf = doc.type === 'pdf';
+      return `
+        <div class="doc-card" onclick="openDoc('${doc.id}')">
+          <div class="doc-card-top ${isPdf ? 'pdf-type' : 'docx-type'}"></div>
+          <div class="doc-card-body">
+            <div class="doc-type-badge ${isPdf ? 'pdf' : 'docx'}">
+              ${isPdf ? '📄 PDF' : '📝 DOCX'}
+            </div>
+            <div class="doc-title">${doc.title}</div>
+            ${doc.author ? `<div class="doc-author">— ${doc.author}</div>` : ''}
+            ${doc.description ? `<div class="doc-desc">${doc.description}</div>` : ''}
+            <div class="doc-meta">
+              <span class="doc-date">📅 ${formatDate(doc.date)}</span>
+              <a class="doc-read-btn" href="viewer.html?id=${doc.id}" onclick="event.stopPropagation()">
+                Xem →
+              </a>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function openDoc(id) {
+    window.location.href = `viewer.html?id=${id}`;
+  }
+
+  function filterDocs(cat, btn) {
+    currentFilter = cat;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    document.getElementById('documents').scrollIntoView({ behavior: 'smooth' });
+    renderDocs();
+  }
+
+  function doSearch() {
+    currentSearch = document.getElementById('heroSearch').value.trim();
+    renderDocs();
+    document.getElementById('documents').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  document.getElementById('heroSearch').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doSearch();
+  });
+
+  // ─── INIT ───
+  renderDocs();
+</script>
+</body>
+</html>

@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản Trị — Tủ Sách Cộng Đồng Trường Tiểu Học Thuận Thành Số 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --wine: #5C1A2E;
+      --wine-deep: #3D1020;
+      --wine-light: #8B2D46;
+      --gold: #C5973A;
+      --gold-light: #E8C068;
+      --gold-pale: #F5E6C4;
+      --cream: #FBF5EA;
+      --cream-dark: #F0E6D0;
+      --text: #2A1810;
+      --text-muted: #6B5040;
+      --green-dark: #1A3228;
+      --white: #FFFDF8;
+      --success: #2A6B3A;
+      --danger: #8B2020;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'EB Garamond', serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      background: var(--wine-deep);
+      border-bottom: 2px solid var(--gold);
+      position: sticky; top: 0; z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1300px; margin: 0 auto;
+      padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 70px;
+    }
+
+    .logo {
+      display: flex; align-items: center; gap: 14px; text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 44px; height: 44px; background: var(--gold); border-radius: 4px;
+      display: flex; align-items: center; justify-content: center; font-size: 22px;
+    }
+
+    .logo-text { display: flex; flex-direction: column; }
+
+    .logo-title {
+      font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700;
+      color: var(--gold-light); line-height: 1.2;
+    }
+
+    .logo-sub {
+      font-family: 'Cormorant Garamond', serif; font-size: 0.72rem;
+      color: rgba(229,198,130,0.6); letter-spacing: 0.12em; text-transform: uppercase;
+    }
+
+    nav { display: flex; align-items: center; gap: 8px; }
+
+    nav a {
+      font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; font-weight: 500;
+      color: var(--gold-pale); text-decoration: none; padding: 6px 16px; border-radius: 3px;
+      transition: all 0.2s;
+    }
+
+    nav a:hover { background: rgba(197,151,58,0.15); color: var(--gold-light); }
+
+    .btn-home { border: 1px solid rgba(197,151,58,0.4); }
+
+    .admin-badge {
+      background: var(--gold); color: var(--wine-deep); padding: 4px 12px;
+      border-radius: 2px; font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em;
+    }
+
+    /* ─── LOGIN PAGE ─── */
+    #loginPage {
+      min-height: calc(100vh - 70px);
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--wine-deep) 0%, #2A1810 50%, var(--green-dark) 100%);
+      position: relative; overflow: hidden;
+    }
+
+    #loginPage::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(197,151,58,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(197,151,58,0.08) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .login-card {
+      position: relative; z-index: 1;
+      background: var(--white);
+      border: 1px solid rgba(197,151,58,0.3);
+      border-radius: 4px;
+      padding: 3rem 2.5rem;
+      width: 100%; max-width: 440px;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+      animation: cardIn 0.6s cubic-bezier(0.25,0.46,0.45,0.94) both;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .login-header { text-align: center; margin-bottom: 2rem; }
+
+    .login-icon {
+      width: 64px; height: 64px; background: var(--wine-deep); border-radius: 4px;
+      display: flex; align-items: center; justify-content: center; font-size: 28px;
+      margin: 0 auto 1rem;
+      border: 2px solid var(--gold);
+    }
+
+    .login-label {
+      font-family: 'Cormorant Garamond', serif; font-size: 0.78rem;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .login-title {
+      font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700;
+      color: var(--wine-deep);
+    }
+
+    .form-group { margin-bottom: 1.25rem; }
+
+    .form-label {
+      display: block; font-family: 'Cormorant Garamond', serif;
+      font-size: 0.85rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid var(--cream-dark); border-radius: 3px;
+      font-family: 'EB Garamond', serif; font-size: 1rem; color: var(--text);
+      background: var(--white); outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus { border-color: var(--wine); }
+
+    .btn-login {
+      width: 100%; padding: 13px;
+      background: var(--wine-deep); color: var(--gold-light);
+      border: none; border-radius: 3px; cursor: pointer;
+      font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700;
+      letter-spacing: 0.05em; transition: all 0.2s;
+      margin-top: 0.5rem;
+    }
+
+    .btn-login:hover { background: var(--wine); }
+
+    .login-error {
+      background: rgba(139,32,32,0.08); border: 1px solid rgba(139,32,32,0.3);
+      color: var(--danger); padding: 10px 14px; border-radius: 3px;
+      font-family: 'Cormorant Garamond', serif; font-size: 0.95rem;
+      margin-bottom: 1rem; display: none;
+    }
+
+    .login-hint {
+      text-align: center; margin-top: 1.5rem;
+      font-family: 'Cormorant Garamond', serif; font-size: 0.85rem;
+      color: #ccc; line-height: 1.6;
+    }
+
+    /* ─── ADMIN PANEL ─── */
+    #adminPanel { display: none; }
+
+    .admin-hero {
+      background: linear-gradient(135deg, var(--wine-deep), #2A1810);
+      border-bottom: 2px solid var(--gold);
+      padding: 2.5rem 2rem;
+    }
+
+    .admin-hero-inner {
+      max-width: 1300px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .admin-hero-text {}
+
+    .admin-greeting {
+      font-family: 'Cormorant Garamond', serif; font-size: 0.85rem;
+      color: rgba(197,151,58,0.6); letter-spacing: 0.12em; text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .admin-hero-title {
+      font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700;
+      color: var(--white);
+    }
+
+    .admin-hero-title span { color: var(--gold-light); font-style: italic; }
+
+    .btn-logout {
+      background: transparent; border: 1px solid rgba(197,151,58,0.4);
+      color: var(--gold-pale); padding: 10px 22px; border-radius: 3px;
+      font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ─── TABS ─── */
+    .tabs-bar {
+      background: var(--wine);
+      border-bottom: 2px solid var(--gold);
+    }
+
+    .tabs-inner {
+      max-width: 1300px; margin: 0 auto; padding: 0 2rem;
+      display: flex; gap: 0;
+    }
+
+    .tab-btn {
+      font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 500;
+      color: rgba(245,230,196,0.65); padding: 16px 28px; border: none;
+      background: transparent; cursor: pointer; transition: all 0.2s;
+      border-bottom: 3px solid transparent; letter-spacing: 0.03em;
+      margin-bottom: -2px;
+    }
+
+    .tab-btn:hover { color: var(--gold-pale); }
+
+    .tab-btn.active {
+      color: var(--gold-light); border-bottom-color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* ─── CONTENT ─── */
+    .admin-content {
+      max-width: 1300px; margin: 0 auto; padding: 2.5rem 2rem 4rem;
+    }
+
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* ─── UPLOAD FORM ─── */
+    .upload-card {
+      background: var(--white); border: 1px solid var(--cream-dark);
+      border-radius: 4px; padding: 2.5rem; max-width: 700px;
+    }
+
+    .card-title {
+      font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700;
+      color: var(--wine-deep); margin-bottom: 0.4rem;
+    }
+
+    .card-sub {
+      font-family: 'Cormorant Garamond', serif; font-size: 1rem;
+      color: var(--text-muted); margin-bottom: 2rem;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+
+    .form-group-full { grid-column: 1 / -1; }
+
+    .form-select {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid var(--cream-dark); border-radius: 3px;
+      font-family: 'EB Garamond', serif; font-size: 1rem; color: var(--text);
+      background: var(--white); outline: none; cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .form-select:focus { border-color: var(--wine); }
+
+    .form-textarea {
+      width: 100%; padding: 11px 14px; min-height: 100px;
+      border: 1.5px solid var(--cream-dark); border-radius: 3px;
+      font-family: 'EB Garamond', serif; font-size: 1rem; color: var(--text);
+      background: var(--white); outline: none; resize: vertical;
+      transition: border-color 0.2s;
+    }
+
+    .form-textarea:focus { border-color: var(--wine); }
+
+    /* ─── FILE DROP ZONE ─── */
+    .drop-zone {
+      border: 2px dashed var(--cream-dark); border-radius: 4px;
+      padding: 3rem 2rem; text-align: center; cursor: pointer;
+      transition: all 0.2s; position: relative; background: var(--cream);
+    }
+
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--wine); background: rgba(92,26,46,0.04);
+    }
+
+    .drop-zone input { display: none; }
+
+    .drop-icon { font-size: 2.8rem; margin-bottom: 0.75rem; }
+
+    .drop-text {
+      font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600;
+      color: var(--wine-deep); margin-bottom: 4px;
+    }
+
+    .drop-hint {
+      font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; color: #aaa;
+    }
+
+    .drop-types {
+      display: inline-flex; gap: 8px; margin-top: 12px;
+    }
+
+    .type-pill {
+      font-family: 'Cormorant Garamond', serif; font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 12px;
+      border-radius: 2px;
+    }
+
+    .type-pill.pdf { background: rgba(92,26,46,0.12); color: var(--wine); }
+    .type-pill.docx { background: rgba(26,50,40,0.12); color: var(--green-dark); }
+
+    .file-selected {
+      display: none; margin-top: 16px;
+      background: rgba(42,107,58,0.08); border: 1px solid rgba(42,107,58,0.25);
+      border-radius: 3px; padding: 12px 16px;
+      font-family: 'Cormorant Garamond', serif; font-size: 0.95rem;
+      color: var(--success); align-items: center; gap: 10px;
+    }
+
+    .file-selected.show { display: flex; }
+
+    .btn-upload {
+      background: var(--wine-deep); color: var(--gold-light); border: none;
+      padding: 13px 36px; border-radius: 3px; cursor: pointer;
+      font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700;
+      letter-spacing: 0.05em; transition: all 0.2s; margin-top: 1.5rem;
+    }
+
+    .btn-upload:hover { background: var(--wine); }
+    .btn-upload:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ─── ALERT ─── */
+    .alert {
+      padding: 12px 16px; border-radius: 3px; margin-bottom: 1.5rem;
+      font-family: 'Cormorant Garamond', serif; font-size: 1rem;
+      display: none;
+    }
+
+    .alert.success {
+      background: rgba(42,107,58,0.1); border: 1px solid rgba(42,107,58,0.3);
+      color: var(--success);
+    }
+
+    .alert.error {
+      background: rgba(139,32,32,0.08); border: 1px solid rgba(139,32,32,0.3);
+      color: var(--danger);
+    }
+
+    .alert.show { display: block; }
+
+    /* ─── MANAGE TAB ─── */
+    .manage-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .manage-title {
+      font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700;
+      color: var(--wine-deep);
+    }
+
+    .doc-count {
+      font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; color: var(--text-muted);
+    }
+
+    .manage-table {
+      width: 100%; border-collapse: collapse;
+      background: var(--white); border: 1px solid var(--cream-dark); border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .manage-table th {
+      font-family: 'Cormorant Garamond', serif; font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted);
+      background: var(--cream); padding: 14px 16px; text-align: left;
+      border-bottom: 1px solid var(--cream-dark);
+    }
+
+    .manage-table td {
+      padding: 14px 16px; border-bottom: 1px solid var(--cream-dark);
+      font-family: 'EB Garamond', serif; font-size: 0.95rem;
+      vertical-align: middle;
+    }
+
+    .manage-table tr:last-child td { border-bottom: none; }
+
+    .manage-table tr:hover td { background: rgba(251,245,234,0.5); }
+
+    .table-title {
+      font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 600;
+      color: var(--wine-deep);
+    }
+
+    .table-meta { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
+
+    .type-badge {
+      display: inline-block; font-family: 'Cormorant Garamond', serif;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 2px;
+    }
+
+    .type-badge.pdf { background: rgba(92,26,46,0.1); color: var(--wine); }
+    .type-badge.docx { background: rgba(26,50,40,0.1); color: var(--green-dark); }
+
+    .btn-table {
+      font-family: 'Cormorant Garamond', serif; font-size: 0.88rem; font-weight: 600;
+      padding: 6px 14px; border-radius: 2px; cursor: pointer; transition: all 0.2s;
+      border: 1px solid; text-decoration: none; display: inline-block;
+    }
+
+    .btn-view {
+      background: transparent; border-color: var(--wine-light); color: var(--wine);
+      margin-right: 6px;
+    }
+
+    .btn-view:hover { background: var(--wine); color: var(--gold-pale); }
+
+    .btn-delete {
+      background: transparent; border-color: rgba(139,32,32,0.3); color: var(--danger);
+    }
+
+    .btn-delete:hover { background: var(--danger); color: white; }
+
+    /* ─── EMPTY ─── */
+    .table-empty {
+      text-align: center; padding: 4rem 2rem;
+    }
+
+    .table-empty-icon { font-size: 3rem; opacity: 0.3; margin-bottom: 1rem; }
+
+    .table-empty-text {
+      font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--text-muted);
+    }
+
+    /* ─── STATS CARDS ─── */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+      background: var(--white); border: 1px solid var(--cream-dark); border-radius: 4px;
+      padding: 1.5rem; display: flex; align-items: center; gap: 16px;
+    }
+
+    .stat-card-icon {
+      width: 52px; height: 52px; border-radius: 4px;
+      display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .stat-card-icon.wine { background: rgba(92,26,46,0.1); }
+    .stat-card-icon.gold { background: rgba(197,151,58,0.12); }
+    .stat-card-icon.green { background: rgba(26,50,40,0.1); }
+
+    .stat-card-num {
+      font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700;
+      color: var(--wine-deep); line-height: 1;
+    }
+
+    .stat-card-label {
+      font-family: 'Cormorant Garamond', serif; font-size: 0.85rem; color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    @media (max-width: 768px) {
+      .form-row { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .manage-table th:nth-child(3),
+      .manage-table td:nth-child(3) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">📚</div>
+      <div class="logo-text">
+        <span class="logo-title">Tủ Sách Cộng Đồng Thuận Thành Số 1</span>
+        <span class="logo-sub">Trường Tiểu Học Thuận Thành Số 1</span>
+      </div>
+    </a>
+    <nav>
+      <a href="index.html" class="btn-home">← Trang Chủ</a>
+      <span class="admin-badge" id="adminBadge" style="display:none">⚙ Admin</span>
+    </nav>
+  </div>
+</header>
+
+<!-- ─── LOGIN PAGE ─── -->
+<div id="loginPage">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-icon">🔐</div>
+      <div class="login-label">Khu Vực Quản Trị</div>
+      <h1 class="login-title">Đăng Nhập Admin</h1>
+    </div>
+
+    <div class="login-error" id="loginError">
+      ⚠ Tên đăng nhập hoặc mật khẩu không đúng.
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Tên đăng nhập</label>
+      <input type="text" class="form-input" id="loginUser" placeholder="admin" autocomplete="username" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Mật khẩu</label>
+      <input type="password" class="form-input" id="loginPass" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+
+    <button class="btn-login" onclick="doLogin()">Đăng Nhập →</button>
+
+    <div class="login-hint">
+      Chỉ quản trị viên mới có thể truy cập khu vực này.<br />
+      Tên đăng nhập: <strong>admin</strong> &nbsp;|&nbsp; Mật khẩu: <strong>daisu2024</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ─── ADMIN PANEL ─── -->
+<div id="adminPanel">
+  <div class="admin-hero">
+    <div class="admin-hero-inner">
+      <div class="admin-hero-text">
+        <div class="admin-greeting">✦ Bảng Điều Khiển</div>
+        <h1 class="admin-hero-title">Chào mừng, <span>Admin</span> 👋</h1>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Đăng Xuất</button>
+    </div>
+  </div>
+
+  <div class="tabs-bar">
+    <div class="tabs-inner">
+      <button class="tab-btn active" onclick="showTab('upload', this)">📤 Đăng Tải Tài Liệu</button>
+      <button class="tab-btn" onclick="showTab('manage', this)">📋 Quản Lý Tài Liệu</button>
+    </div>
+  </div>
+
+  <div class="admin-content">
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card-icon wine">📄</div>
+        <div>
+          <div class="stat-card-num" id="sTotalDocs">0</div>
+          <div class="stat-card-label">Tổng Tài Liệu</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon gold">📑</div>
+        <div>
+          <div class="stat-card-num" id="sPdfCount">0</div>
+          <div class="stat-card-label">Tệp PDF</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon green">📝</div>
+        <div>
+          <div class="stat-card-num" id="sDocxCount">0</div>
+          <div class="stat-card-label">Tệp DOCX</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload Tab -->
+    <div class="tab-pane active" id="paneUpload">
+      <div class="upload-card">
+        <h2 class="card-title">Đăng Tải Tài Liệu Mới</h2>
+        <p class="card-sub">Hỗ trợ định dạng PDF và DOCX</p>
+
+        <div class="alert" id="uploadAlert"></div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Tiêu đề tài liệu *</label>
+            <input type="text" class="form-input" id="docTitle" placeholder="Nhập tiêu đề..." />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tác giả</label>
+            <input type="text" class="form-input" id="docAuthor" placeholder="Tên tác giả..." />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Danh mục</label>
+            <select class="form-select" id="docCategory">
+              <option value="">— Chọn danh mục —</option>
+              <option value="Văn học">Văn Học</option>
+              <option value="Lịch sử">Lịch Sử</option>
+              <option value="Khoa học">Khoa Học</option>
+              <option value="Giáo dục">Giáo Dục</option>
+              <option value="Nghệ thuật">Nghệ Thuật</option>
+              <option value="Khác">Khác</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Năm xuất bản</label>
+            <input type="text" class="form-input" id="docYear" placeholder="VD: 2024" />
+          </div>
+          <div class="form-group form-group-full">
+            <label class="form-label">Mô tả / Tóm tắt</label>
+            <textarea class="form-textarea" id="docDesc" placeholder="Mô tả ngắn về tài liệu này..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tệp tài liệu *</label>
+          <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()"
+               ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+            <input type="file" id="fileInput" accept=".pdf,.docx" onchange="handleFileSelect(event)" />
+            <div class="drop-icon">📂</div>
+            <div class="drop-text">Kéo thả tệp vào đây hoặc nhấn để chọn</div>
+            <div class="drop-hint">Dung lượng tối đa ~15MB (tuỳ bộ nhớ trình duyệt)</div>
+            <div class="drop-types">
+              <span class="type-pill pdf">PDF</span>
+              <span class="type-pill docx">DOCX</span>
+            </div>
+          </div>
+          <div class="file-selected" id="fileSelected">
+            <span id="fileSelectedIcon">📄</span>
+            <span id="fileSelectedName">—</span>
+          </div>
+        </div>
+
+        <!-- Progress -->
+        <div id="uploadProgress" style="display:none; margin-top:1rem;">
+          <div style="height:4px; background:var(--cream-dark); border-radius:2px; overflow:hidden;">
+            <div id="progressBar" style="height:100%; background:var(--wine); width:0%; transition:width 0.3s;"></div>
+          </div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:0.85rem; color:var(--text-muted); margin-top:6px;" id="progressText">Đang xử lý...</div>
+        </div>
+
+        <button class="btn-upload" id="btnUpload" onclick="uploadDoc()">
+          📤 Đăng Tải Tài Liệu
+        </button>
+      </div>
+    </div>
+
+    <!-- Manage Tab -->
+    <div class="tab-pane" id="paneManage">
+      <div class="manage-header">
+        <h2 class="manage-title">Quản Lý Tài Liệu</h2>
+        <span class="doc-count" id="docCountLabel">0 tài liệu</span>
+      </div>
+
+      <div id="manageContent">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ─── AUTH ───
+  const ADMIN_USER = 'admin';
+  const ADMIN_PASS = 'daisu2024';
+
+  function isLoggedIn() {
+    return sessionStorage.getItem('admin_auth') === 'true';
+  }
+
+  function doLogin() {
+    const u = document.getElementById('loginUser').value.trim();
+    const p = document.getElementById('loginPass').value;
+    const err = document.getElementById('loginError');
+
+    if (u === ADMIN_USER && p === ADMIN_PASS) {
+      sessionStorage.setItem('admin_auth', 'true');
+      err.style.display = 'none';
+      showAdminPanel();
+    } else {
+      err.style.display = 'block';
+      document.getElementById('loginPass').value = '';
+    }
+  }
+
+  function doLogout() {
+    sessionStorage.removeItem('admin_auth');
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('adminBadge').style.display = 'none';
+    document.getElementById('loginUser').value = '';
+    document.getElementById('loginPass').value = '';
+  }
+
+  function showAdminPanel() {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    document.getElementById('adminBadge').style.display = 'inline';
+    refreshStats();
+    renderManage();
+  }
+
+  document.getElementById('loginPass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+  document.getElementById('loginUser').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('loginPass').focus();
+  });
+
+  if (isLoggedIn()) showAdminPanel();
+
+  // ─── TABS ───
+  function showTab(name, btn) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('pane' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
+    btn.classList.add('active');
+    if (name === 'manage') renderManage();
+  }
+
+  // ─── STORAGE ───
+  function getDocs() {
+    try { return JSON.parse(localStorage.getItem('library_docs') || '[]'); }
+    catch(e) { return []; }
+  }
+
+  function saveDocs(docs) {
+    localStorage.setItem('library_docs', JSON.stringify(docs));
+  }
+
+  function genId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+  }
+
+  // ─── FILE HANDLING ───
+  let selectedFile = null;
+
+  function handleFileSelect(e) {
+    setFile(e.target.files[0]);
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault();
+    document.getElementById('dropZone').classList.add('dragover');
+  }
+
+  function handleDragLeave() {
+    document.getElementById('dropZone').classList.remove('dragover');
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('dropZone').classList.remove('dragover');
+    if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]);
+  }
+
+  function setFile(file) {
+    if (!file) return;
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (!['pdf','docx'].includes(ext)) {
+      showAlert('error', '⚠ Chỉ hỗ trợ tệp .pdf và .docx');
+      return;
+    }
+    selectedFile = file;
+    const sel = document.getElementById('fileSelected');
+    sel.classList.add('show');
+    document.getElementById('fileSelectedIcon').textContent = ext === 'pdf' ? '📄' : '📝';
+    document.getElementById('fileSelectedName').textContent =
+      file.name + ' (' + formatSize(file.size) + ')';
+  }
+
+  function formatSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/(1024*1024)).toFixed(1) + ' MB';
+  }
+
+  // ─── UPLOAD ───
+  function uploadDoc() {
+    const title = document.getElementById('docTitle').value.trim();
+    if (!title) { showAlert('error', '⚠ Vui lòng nhập tiêu đề tài liệu.'); return; }
+    if (!selectedFile) { showAlert('error', '⚠ Vui lòng chọn tệp tài liệu.'); return; }
+
+    const ext = selectedFile.name.split('.').pop().toLowerCase();
+    const btn = document.getElementById('btnUpload');
+    btn.disabled = true;
+
+    const progress = document.getElementById('uploadProgress');
+    const bar = document.getElementById('progressBar');
+    const ptext = document.getElementById('progressText');
+    progress.style.display = 'block';
+    bar.style.width = '0%';
+    ptext.textContent = 'Đang đọc tệp...';
+
+    const reader = new FileReader();
+
+    reader.onprogress = e => {
+      if (e.lengthComputable) {
+        const pct = Math.round(e.loaded / e.total * 70);
+        bar.style.width = pct + '%';
+      }
+    };
+
+    reader.onload = e => {
+      bar.style.width = '85%';
+      ptext.textContent = 'Đang lưu tài liệu...';
+
+      setTimeout(() => {
+        try {
+          const docs = getDocs();
+          const doc = {
+            id: genId(),
+            title,
+            author: document.getElementById('docAuthor').value.trim(),
+            category: document.getElementById('docCategory').value,
+            year: document.getElementById('docYear').value.trim(),
+            description: document.getElementById('docDesc').value.trim(),
+            type: ext,
+            filename: selectedFile.name,
+            size: selectedFile.size,
+            date: new Date().toISOString(),
+            data: e.target.result
+          };
+
+          docs.push(doc);
+          saveDocs(docs);
+
+          bar.style.width = '100%';
+          ptext.textContent = 'Hoàn thành!';
+
+          setTimeout(() => {
+            progress.style.display = 'none';
+            bar.style.width = '0%';
+            showAlert('success', '✓ Tài liệu "' + title + '" đã được đăng tải thành công!');
+            resetForm();
+            refreshStats();
+          }, 400);
+
+        } catch(err) {
+          progress.style.display = 'none';
+          if (err.name === 'QuotaExceededError') {
+            showAlert('error', '⚠ Dung lượng lưu trữ đã đầy. Vui lòng xóa bớt tài liệu.');
+          } else {
+            showAlert('error', '⚠ Đã xảy ra lỗi: ' + err.message);
+          }
+        }
+        btn.disabled = false;
+      }, 300);
+    };
+
+    reader.onerror = () => {
+      showAlert('error', '⚠ Không thể đọc tệp. Vui lòng thử lại.');
+      btn.disabled = false;
+      progress.style.display = 'none';
+    };
+
+    reader.readAsDataURL(selectedFile);
+  }
+
+  function resetForm() {
+    document.getElementById('docTitle').value = '';
+    document.getElementById('docAuthor').value = '';
+    document.getElementById('docCategory').value = '';
+    document.getElementById('docYear').value = '';
+    document.getElementById('docDesc').value = '';
+    document.getElementById('fileInput').value = '';
+    document.getElementById('fileSelected').classList.remove('show');
+    selectedFile = null;
+  }
+
+  function showAlert(type, msg) {
+    const el = document.getElementById('uploadAlert');
+    el.className = 'alert ' + type + ' show';
+    el.textContent = msg;
+    setTimeout(() => el.classList.remove('show'), 5000);
+  }
+
+  // ─── STATS ───
+  function refreshStats() {
+    const docs = getDocs();
+    document.getElementById('sTotalDocs').textContent = docs.length;
+    document.getElementById('sPdfCount').textContent = docs.filter(d=>d.type==='pdf').length;
+    document.getElementById('sDocxCount').textContent = docs.filter(d=>d.type==='docx').length;
+  }
+
+  // ─── MANAGE ───
+  function renderManage() {
+    const docs = getDocs().sort((a,b)=>new Date(b.date)-new Date(a.date));
+    const el = document.getElementById('manageContent');
+    const countEl = document.getElementById('docCountLabel');
+    countEl.textContent = docs.length + ' tài liệu';
+    refreshStats();
+
+    if (docs.length === 0) {
+      el.innerHTML = `
+        <div class="table-empty">
+          <div class="table-empty-icon">📭</div>
+          <div class="table-empty-text">Chưa có tài liệu nào. Hãy đăng tải tài liệu đầu tiên!</div>
+        </div>`;
+      return;
+    }
+
+    el.innerHTML = `
+      <table class="manage-table">
+        <thead>
+          <tr>
+            <th>Tài Liệu</th>
+            <th>Loại</th>
+            <th>Ngày Đăng</th>
+            <th>Kích Thước</th>
+            <th>Thao Tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${docs.map(doc => `
+            <tr>
+              <td>
+                <div class="table-title">${doc.title}</div>
+                <div class="table-meta">${doc.author ? '— ' + doc.author : ''} ${doc.category ? '· ' + doc.category : ''}</div>
+              </td>
+              <td><span class="type-badge ${doc.type}">${doc.type.toUpperCase()}</span></td>
+              <td>${formatDate(doc.date)}</td>
+              <td>${formatSize(doc.size || 0)}</td>
+              <td>
+                <a href="viewer.html?id=${doc.id}" target="_blank" class="btn-table btn-view">Xem</a>
+                <button class="btn-table btn-delete" onclick="deleteDoc('${doc.id}', '${doc.title.replace(/'/g,"\\'")}')">Xóa</button>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  function deleteDoc(id, title) {
+    if (!confirm('Bạn có chắc muốn xóa tài liệu "' + title + '"?\nHành động này không thể hoàn tác.')) return;
+    const docs = getDocs().filter(d => d.id !== id);
+    saveDocs(docs);
+    renderManage();
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    return d.toLocaleDateString('vi-VN', { day:'2-digit', month:'2-digit', year:'numeric' });
+  }
+</script>
+</body>
+</html>

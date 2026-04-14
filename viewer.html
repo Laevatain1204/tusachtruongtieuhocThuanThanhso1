@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Xem Tài Liệu — Tủ Sách Cộng Đồng Trường Tiểu Học Thuận Thành Số 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <!-- mammoth.js for DOCX rendering -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <style>
+    :root {
+      --wine: #5C1A2E;
+      --wine-deep: #3D1020;
+      --wine-light: #8B2D46;
+      --gold: #C5973A;
+      --gold-light: #E8C068;
+      --gold-pale: #F5E6C4;
+      --cream: #FBF5EA;
+      --cream-dark: #F0E6D0;
+      --text: #2A1810;
+      --text-muted: #6B5040;
+      --green-dark: #1A3228;
+      --white: #FFFDF8;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'EB Garamond', serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      background: var(--wine-deep);
+      border-bottom: 2px solid var(--gold);
+      position: sticky; top: 0; z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1400px; margin: 0 auto; padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 66px;
+    }
+
+    .logo {
+      display: flex; align-items: center; gap: 12px; text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 40px; height: 40px; background: var(--gold); border-radius: 3px;
+      display: flex; align-items: center; justify-content: center; font-size: 20px;
+    }
+
+    .logo-title {
+      font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700;
+      color: var(--gold-light);
+    }
+
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-back {
+      font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; font-weight: 500;
+      color: var(--gold-pale); text-decoration: none; padding: 7px 16px;
+      border: 1px solid rgba(197,151,58,0.3); border-radius: 3px;
+      transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+    }
+
+    .btn-back:hover { border-color: var(--gold); color: var(--gold); }
+
+    .btn-download {
+      font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; font-weight: 600;
+      color: var(--wine-deep); background: var(--gold);
+      text-decoration: none; padding: 7px 18px;
+      border-radius: 3px; transition: all 0.2s;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .btn-download:hover { background: var(--gold-light); }
+
+    /* ─── DOC INFO BAR ─── */
+    .doc-info-bar {
+      background: var(--wine); border-bottom: 1px solid rgba(197,151,58,0.2);
+      padding: 1.2rem 2rem;
+    }
+
+    .doc-info-inner {
+      max-width: 1400px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .doc-info-left {}
+
+    .doc-breadcrumb {
+      font-family: 'Cormorant Garamond', serif; font-size: 0.8rem;
+      color: rgba(245,230,196,0.5); letter-spacing: 0.08em; margin-bottom: 4px;
+    }
+
+    .doc-info-title {
+      font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700;
+      color: var(--white); line-height: 1.25;
+    }
+
+    .doc-info-meta {
+      font-family: 'Cormorant Garamond', serif; font-size: 0.95rem;
+      color: rgba(245,230,196,0.65); margin-top: 4px;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+
+    .doc-info-meta span { display: flex; align-items: center; gap: 4px; }
+
+    .type-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: 'Cormorant Garamond', serif; font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 12px;
+      border-radius: 2px;
+    }
+
+    .type-pill.pdf { background: rgba(255,255,255,0.15); color: var(--gold-light); }
+    .type-pill.docx { background: rgba(255,255,255,0.12); color: #9BCFB8; }
+
+    /* ─── VIEWER AREA ─── */
+    .viewer-area {
+      flex: 1; display: flex;
+      max-width: 1400px; margin: 0 auto; width: 100%;
+      padding: 1.5rem 2rem 3rem;
+      gap: 1.5rem;
+    }
+
+    /* ─── PDF VIEWER ─── */
+    .pdf-viewer-wrap {
+      flex: 1; background: #444; border-radius: 4px; overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3); min-height: calc(100vh - 280px);
+    }
+
+    .pdf-viewer-wrap iframe {
+      width: 100%; height: 100%; border: none; min-height: calc(100vh - 280px);
+      display: block;
+    }
+
+    /* ─── DOCX VIEWER ─── */
+    .docx-viewer-wrap {
+      flex: 1;
+    }
+
+    .docx-content {
+      background: var(--white); border: 1px solid var(--cream-dark);
+      border-radius: 4px; padding: 4rem 5rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      min-height: calc(100vh - 280px);
+      font-family: 'EB Garamond', serif; font-size: 1.05rem; line-height: 1.75;
+      color: var(--text);
+    }
+
+    .docx-content h1, .docx-content h2, .docx-content h3 {
+      font-family: 'Playfair Display', serif; color: var(--wine-deep);
+      margin: 1.5rem 0 0.75rem;
+    }
+
+    .docx-content p { margin-bottom: 1rem; }
+    .docx-content table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+    .docx-content td, .docx-content th {
+      border: 1px solid var(--cream-dark); padding: 8px 12px;
+    }
+    .docx-content th { background: var(--cream); font-weight: 600; }
+    .docx-content ul, .docx-content ol { margin: 0.5rem 0 1rem 1.5rem; }
+    .docx-content li { margin-bottom: 0.3rem; }
+    .docx-content img { max-width: 100%; height: auto; margin: 1rem 0; border-radius: 2px; }
+    .docx-content strong { color: var(--wine-deep); }
+
+    /* ─── SIDEBAR ─── */
+    .doc-sidebar {
+      width: 260px; flex-shrink: 0;
+    }
+
+    .sidebar-card {
+      background: var(--white); border: 1px solid var(--cream-dark);
+      border-radius: 4px; padding: 1.5rem; margin-bottom: 1rem;
+    }
+
+    .sidebar-card-title {
+      font-family: 'Cormorant Garamond', serif; font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold);
+      margin-bottom: 14px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--cream-dark);
+    }
+
+    .detail-row { margin-bottom: 12px; }
+
+    .detail-label {
+      font-family: 'Cormorant Garamond', serif; font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase; color: #aaa;
+      margin-bottom: 3px;
+    }
+
+    .detail-value {
+      font-family: 'EB Garamond', serif; font-size: 0.95rem; color: var(--text);
+    }
+
+    .detail-value.italic { font-style: italic; color: var(--text-muted); }
+
+    .btn-dl-full {
+      display: block; width: 100%; padding: 11px;
+      background: var(--wine-deep); color: var(--gold-light);
+      border: none; border-radius: 3px; cursor: pointer;
+      font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 600;
+      text-align: center; text-decoration: none; transition: background 0.2s;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-dl-full:hover { background: var(--wine); }
+
+    /* ─── LOADING / ERROR ─── */
+    .state-page {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      flex-direction: column; text-align: center; padding: 4rem;
+    }
+
+    .state-icon { font-size: 4rem; margin-bottom: 1.5rem; opacity: 0.5; }
+
+    .state-title {
+      font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700;
+      color: var(--wine-deep); margin-bottom: 0.75rem;
+    }
+
+    .state-desc {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.1rem;
+      color: var(--text-muted); margin-bottom: 2rem; max-width: 400px;
+    }
+
+    .btn-home {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--wine-deep); color: var(--gold-light);
+      text-decoration: none; padding: 12px 28px; border-radius: 3px;
+      font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .btn-home:hover { background: var(--wine); }
+
+    .loading-spinner {
+      width: 48px; height: 48px; border: 4px solid var(--cream-dark);
+      border-top-color: var(--wine); border-radius: 50%;
+      animation: spin 0.8s linear infinite; margin-bottom: 1.5rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 900px) {
+      .doc-sidebar { display: none; }
+      .docx-content { padding: 2rem 1.5rem; }
+    }
+
+    @media (max-width: 600px) {
+      .viewer-area { padding: 1rem; }
+      .doc-info-title { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">📚</div>
+      <span class="logo-title">Tủ Sách Cộng Đồng Thuận Thành Số 1</span>
+    </a>
+    <div class="header-actions">
+      <a href="index.html" class="btn-back">← Trở Về</a>
+      <a href="#" class="btn-download" id="btnDownload" style="display:none">⬇ Tải Xuống</a>
+    </div>
+  </div>
+</header>
+
+<!-- ─── DOC INFO BAR ─── -->
+<div class="doc-info-bar" id="docInfoBar" style="display:none">
+  <div class="doc-info-inner">
+    <div class="doc-info-left">
+      <div class="doc-breadcrumb">📚 Tủ Sách / <span id="infoCategory">—</span></div>
+      <div class="doc-info-title" id="infoTitle">—</div>
+      <div class="doc-info-meta">
+        <span id="infoAuthor"></span>
+        <span id="infoYear"></span>
+        <span id="infoType"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MAIN CONTENT ─── -->
+<div id="mainContent" style="flex:1; display:flex;">
+
+  <!-- Loading State -->
+  <div class="state-page" id="stateLoading">
+    <div class="loading-spinner"></div>
+    <div class="state-title">Đang Tải Tài Liệu…</div>
+    <div class="state-desc">Vui lòng chờ trong giây lát.</div>
+  </div>
+
+  <!-- Error State -->
+  <div class="state-page" id="stateError" style="display:none">
+    <div class="state-icon">📭</div>
+    <div class="state-title">Không Tìm Thấy Tài Liệu</div>
+    <div class="state-desc">Tài liệu này không tồn tại hoặc đã bị xóa khỏi thư viện.</div>
+    <a href="index.html" class="btn-home">← Quay Về Trang Chủ</a>
+  </div>
+
+  <!-- Viewer -->
+  <div class="viewer-area" id="viewerArea" style="display:none">
+
+    <!-- Main Content Area -->
+    <div id="viewerMain" style="flex:1; display:flex; flex-direction:column;"></div>
+
+    <!-- Sidebar -->
+    <aside class="doc-sidebar" id="docSidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">Thông Tin Tài Liệu</div>
+
+        <div class="detail-row">
+          <div class="detail-label">Tiêu đề</div>
+          <div class="detail-value" id="sideTitle">—</div>
+        </div>
+        <div class="detail-row" id="rowAuthor">
+          <div class="detail-label">Tác giả</div>
+          <div class="detail-value italic" id="sideAuthor">—</div>
+        </div>
+        <div class="detail-row" id="rowCat">
+          <div class="detail-label">Danh mục</div>
+          <div class="detail-value" id="sideCat">—</div>
+        </div>
+        <div class="detail-row" id="rowYear">
+          <div class="detail-label">Năm xuất bản</div>
+          <div class="detail-value" id="sideYear">—</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Định dạng</div>
+          <div class="detail-value" id="sideType">—</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Ngày đăng</div>
+          <div class="detail-value" id="sideDate">—</div>
+        </div>
+      </div>
+
+      <div class="sidebar-card" id="descCard" style="display:none">
+        <div class="sidebar-card-title">Mô Tả</div>
+        <div style="font-family:'EB Garamond',serif; font-size:0.93rem; line-height:1.65; color:var(--text-muted);"
+             id="sideDesc"></div>
+      </div>
+
+      <a href="#" class="btn-dl-full" id="btnDlSide">⬇ Tải Xuống</a>
+    </aside>
+
+  </div>
+
+</div>
+
+<script>
+  // ─── HELPERS ───
+  function getDocs() {
+    try { return JSON.parse(localStorage.getItem('library_docs') || '[]'); }
+    catch(e) { return []; }
+  }
+
+  function getParam(key) {
+    return new URLSearchParams(window.location.search).get(key);
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return d.toLocaleDateString('vi-VN', { day:'2-digit', month:'2-digit', year:'numeric' });
+  }
+
+  function formatSize(bytes) {
+    if (!bytes) return '—';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/(1024*1024)).toFixed(1) + ' MB';
+  }
+
+  // ─── INIT ───
+  function init() {
+    const id = getParam('id');
+    if (!id) { showError(); return; }
+
+    const docs = getDocs();
+    const doc = docs.find(d => d.id === id);
+
+    if (!doc) { showError(); return; }
+
+    // Update title
+    document.title = doc.title + ' — Tủ Sách Cộng Đồng Trường Tiểu Học Thuận Thành Số 1';
+
+    // Fill info bar
+    document.getElementById('docInfoBar').style.display = 'block';
+    document.getElementById('infoTitle').textContent = doc.title;
+      document.getElementById('infoCategory').textContent = doc.category || 'Tài liệu';
+
+    const authorEl = document.getElementById('infoAuthor');
+    if (doc.author) { authorEl.textContent = '✒ ' + doc.author; }
+
+    const yearEl = document.getElementById('infoYear');
+    if (doc.year) { yearEl.textContent = '📅 ' + doc.year; }
+
+    const typeEl = document.getElementById('infoType');
+    typeEl.innerHTML = `<span class="type-pill ${doc.type}">${doc.type.toUpperCase()}</span>`;
+
+    // Fill sidebar
+    document.getElementById('sideTitle').textContent = doc.title;
+    document.getElementById('sideAuthor').textContent = doc.author || '—';
+    document.getElementById('sideCat').textContent = doc.category || '—';
+    document.getElementById('sideYear').textContent = doc.year || '—';
+    document.getElementById('sideType').textContent = doc.type.toUpperCase() + ' · ' + formatSize(doc.size);
+    document.getElementById('sideDate').textContent = formatDate(doc.date);
+
+    if (doc.description) {
+      document.getElementById('descCard').style.display = 'block';
+      document.getElementById('sideDesc').textContent = doc.description;
+    }
+
+    // Download buttons
+    setupDownload(doc);
+
+    // Show viewer
+    document.getElementById('stateLoading').style.display = 'none';
+    document.getElementById('viewerArea').style.display = 'flex';
+
+    if (doc.type === 'pdf') {
+      renderPDF(doc);
+    } else {
+      renderDOCX(doc);
+    }
+  }
+
+  function showError() {
+    document.getElementById('stateLoading').style.display = 'none';
+    document.getElementById('stateError').style.display = 'flex';
+  }
+
+  // ─── DOWNLOAD ───
+  function setupDownload(doc) {
+    const url = doc.data;
+    const filename = doc.filename || (doc.title + '.' + doc.type);
+
+    function setDl(el) {
+      el.style.display = 'flex';
+      el.href = url;
+      el.download = filename;
+    }
+
+    setDl(document.getElementById('btnDownload'));
+    setDl(document.getElementById('btnDlSide'));
+  }
+
+  // ─── PDF VIEWER ───
+  function renderPDF(doc) {
+    const wrap = document.createElement('div');
+    wrap.className = 'pdf-viewer-wrap';
+    wrap.style.flex = '1';
+
+    const iframe = document.createElement('iframe');
+    iframe.src = doc.data;
+    iframe.title = doc.title;
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    iframe.style.minHeight = 'calc(100vh - 260px)';
+    iframe.style.border = 'none';
+    iframe.style.display = 'block';
+
+    wrap.appendChild(iframe);
+    document.getElementById('viewerMain').appendChild(wrap);
+  }
+
+  // ─── DOCX VIEWER ───
+  function renderDOCX(doc) {
+    const wrap = document.createElement('div');
+    wrap.className = 'docx-viewer-wrap';
+    wrap.style.flex = '1';
+
+    const content = document.createElement('div');
+    content.className = 'docx-content';
+    content.innerHTML = `
+      <div style="text-align:center; padding:3rem 0; color:#bbb;">
+        <div style="font-size:2rem; margin-bottom:1rem;">⏳</div>
+        <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--text-muted);">
+          Đang hiển thị tài liệu…
+        </div>
+      </div>`;
+
+    wrap.appendChild(content);
+    document.getElementById('viewerMain').appendChild(wrap);
+
+    // Convert base64 data URL to ArrayBuffer
+    try {
+      const base64 = doc.data.split(',')[1];
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+
+      mammoth.convertToHtml({ arrayBuffer: bytes.buffer })
+        .then(result => {
+          if (result.value && result.value.trim()) {
+            content.innerHTML = result.value;
+          } else {
+            content.innerHTML = `
+              <div style="text-align:center; padding:3rem; color:var(--text-muted);">
+                <div style="font-size:2rem; margin-bottom:1rem;">📝</div>
+                <div style="font-family:'Playfair Display',serif; font-size:1.2rem; margin-bottom:0.5rem; color:var(--wine-deep);">
+                  Tài Liệu Trống
+                </div>
+                <div style="font-family:'Cormorant Garamond',serif; font-size:1rem;">
+                  Tài liệu này không có nội dung văn bản để hiển thị.
+                </div>
+              </div>`;
+          }
+        })
+        .catch(err => {
+          content.innerHTML = `
+            <div style="text-align:center; padding:3rem; color:var(--text-muted);">
+              <div style="font-size:2rem; margin-bottom:1rem;">⚠</div>
+              <div style="font-family:'Playfair Display',serif; font-size:1.2rem; margin-bottom:0.5rem; color:var(--wine-deep);">
+                Không Thể Hiển Thị
+              </div>
+              <div style="font-family:'Cormorant Garamond',serif; font-size:1rem; margin-bottom:1.5rem;">
+                Trình duyệt không thể hiển thị tài liệu này. Vui lòng tải xuống để xem.
+              </div>
+              <a href="${doc.data}" download="${doc.filename || doc.title + '.docx'}"
+                 style="display:inline-flex;align-items:center;gap:8px;background:var(--wine-deep);
+                        color:var(--gold-light);text-decoration:none;padding:12px 28px;
+                        border-radius:3px;font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;">
+                ⬇ Tải Về Máy Để Xem
+              </a>
+            </div>`;
+        });
+    } catch(e) {
+      content.innerHTML = `
+        <div style="text-align:center; padding:3rem;">
+          <p>Có lỗi khi đọc tệp. Vui lòng tải xuống để xem.</p>
+        </div>`;
+    }
+  }
+
+  // ─── START ───
+  init();
+</script>
+</body>
+</html>
